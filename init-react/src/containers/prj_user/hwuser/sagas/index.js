@@ -2,7 +2,7 @@ import {take, put, call, fork, select, race, cancel} from 'redux-saga/effects'
 import { action,NAVIGATE,REQUEST,SUCCESS,FAILURE } from '../../../../constants/BaseAction'
 import {HW_USER} from '../actions'
 import Api from '../../../../constants/Api'
-import { message } from 'antd'
+import { Toast } from 'antd-mobile'
 import {hashHistory} from 'react-router'
 import { addSaga } from '../../../../store/rootSaga'
 import NavigatorAction from '../../../../constants/NavigatorAction'
@@ -35,14 +35,14 @@ function* watchAddHwUser () {
       const { obj } = yield take(HW_USER.ADD.REQUEST)
    	  let res = yield call(Api.request, Api.calcUrl(HW_USER.URL), { method: 'POST', body: obj } )
       if(res.code == 200){
-   	  yield put(action(HW_USER.ADD.SUCCESS, {data: res.data}))
-      message.success('添加成功')
-      location.href = '#/prj_user/hwuser/list'
+     	  yield put(action(HW_USER.ADD.SUCCESS, {data: res.data}))
+        Toast.info('添加成功', 1)
+        location.href = '#/prj_user/hwuser/list'
       }
       else
       {
-      	  message.success('修改失败')
-      	  yield put(action(ROLE.UPDATE.FAILURE))
+        Toast.info('修改失败', 1)
+    	  yield put(action(ROLE.UPDATE.FAILURE))
       }
     } catch (e) {
       yield put(action(HW_USER.ADD.FAILURE, { error: e }))
@@ -55,14 +55,14 @@ function* watchHwUserUpdate () {
       const { obj } = yield take(HW_USER.UPDATE.REQUEST)
       let res = yield call(Api.request, Api.calcUrl(HW_USER.URL), { method: 'PUT', body: obj } )
       if(res.code == 200){
-      	  yield put(action(HW_USER.UPDATE.SUCCESS, {data: res}))
-          location.href = '#/prj_user/hwuser/list'
-          message.success('修改成功')
+    	  yield put(action(HW_USER.UPDATE.SUCCESS, {data: res}))
+        location.href = '#/prj_user/hwuser/list'
+        Toast.info('修改成功', 1)
       }
       else
       {
-      	  message.success('修改失败')
-      	  yield put(action(ROLE.UPDATE.FAILURE))
+        Toast.info('修改失败', 1)
+    	  yield put(action(ROLE.UPDATE.FAILURE))
       }
     } catch (e) {
       yield put(action(HW_USER.UPDATE.FAILURE, {error:e}))
@@ -78,13 +78,13 @@ function* watchDelHwUser() {
     	let res = yield call(Api.request, Api.calcUrl(HW_USER.URL) + "/" + param['id'], { method: 'DELETE' } )
     	if(res.code == 200){
     		yield put(action(HW_USER.DEL_BY_ID.SUCCESS))
-    		message.success('删除成功')
+        Toast.info('删除成功', 1)
     		yield put(action(HW_USER.QUERY_LIST.REQUEST,{data:listParam}))
     	}
     	else
     	{
-      	  message.success('删除失败')
-      	  yield put(action(HW_USER.DEL_BY_ID.FAILURE, { error: e }))
+        Toast.info('删除失败', 1)
+    	  yield put(action(HW_USER.DEL_BY_ID.FAILURE, { error: e }))
     	}
     } catch (e) {
       yield put(action(HW_USER.DEL_BY_ID.FAILURE, { error: e }))
