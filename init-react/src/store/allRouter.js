@@ -5,4 +5,3 @@ import hwuserRouter from '../containers/prj_user/hwuser/router'
 import hwviewRouter from '../containers/prj_user/hwview/router'
 import { routerList } from './regRouter'
 export { routerList }
-
