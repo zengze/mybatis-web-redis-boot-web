@@ -1,7 +1,6 @@
 import { Router , Route ,hashHistory, browserHistory,IndexRoute,Redirect ,IndexRedirect} from 'react-router'
 import React from 'react'
 import { routerList } from './allRouter'
-import { breadcrumbName } from 'antd'
 import LoginContainer from '../containers/login'
 import MainContainer , {  Welcome } from '../containers/main'
 import SecurityUtil from '../common/TokenUtil'
@@ -16,30 +15,37 @@ import SecurityUtil from '../common/TokenUtil'
 
 
 
- export default class RouteConfig extends React.Component{
-   checkToken = (nextState , replace) => {
-      if(!SecurityUtil.isExistToken()){
-        replace('/login');
-      }
-    }
+export default class RouteConfig extends React.Component{
 
-   render(){
+  checkToken = (nextState , replace) => {
+    if(!SecurityUtil.isExistToken()){
+      replace('/login');
+    }
+  }
+
+  render(){
+
+    //暂时手动清除token
+    // SecurityUtil.delUserToken();
+
     return (
       <Router history={hashHistory}>
-           <Route path="/login" component={LoginContainer} />
-           <Route path="/" breadcrumbName="主页"
-              onEnter={(nextState,replace) => this.checkToken(nextState , replace)}
-              onChange={(preState,nextState,replace) => this.checkToken(nextState , replace)}
-              component={MainContainer}>
-             <IndexRoute component={Welcome} breadcrumbName='欢迎' />
-             {
-                 routerList.map((route,index) => {
-                    return route(index)
-                  })
-
-             }
-           </Route>
-       </Router>
-     )
-   }
- }
+        <Route path="/login" component={LoginContainer} />
+        <Route path="/"
+            breadcrumbName="主页"
+            onEnter={(nextState,replace) => this.checkToken(nextState , replace)}
+            onChange={(preState,nextState,replace) => this.checkToken(nextState , replace)}
+            component={MainContainer}>
+          <IndexRoute component={Welcome}
+            breadcrumbName='欢迎'
+          />
+          {
+            routerList.map((route,index) => {
+              return route(index)
+            })
+          }
+        </Route>
+      </Router>
+    )
+  }
+}
