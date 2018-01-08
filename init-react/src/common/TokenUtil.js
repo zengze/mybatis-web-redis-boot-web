@@ -1,15 +1,17 @@
-import cookie from 'js-cookie'
+// import cookie from 'js-cookie'
 /**
  * 用户token（基于cookie）
  */
 export default class TokenUtil {
 
   static isExistToken = () => {
-    return cookie.get('user_token') ? true : false ;
+    return localStorage.getItem('user_token') ? true : false ;
+    // return cookie.get('user_token') ? true : false ;
   }
 
   static getUserToken = () => {
-    return cookie.get('user_token');
+    return localStorage.getItem('user_token');
+    // return cookie.get('user_token');
   }
   /**
    * 在cookie保存用户token 失效时间 15分钟
@@ -19,21 +21,26 @@ export default class TokenUtil {
    */
   static setUserToken = (token) => {
     if(TokenUtil.isExistToken()){
-      cookie.remove('user_token');
+      localStorage.removeItem('user_token');
+      // cookie.remove('user_token');
     }
-    cookie.set('user_token',`${token}`,{ expires : (1/24/60)*15 }) ;
+    localStorage.setItem('user_token', token);
+    // cookie.set('user_token',`${token}`,{ expires : (1/24/60)*15 }) ;
   }
 
   static delUserToken = () => {
-    cookie.remove('user_token');
+    localStorage.removeItem('user_token');
+    // cookie.remove('user_token');
   }
 
   static getCookieValue = (key) => {
-    return cookie.get(key);
+    return localStorage.getItem('user_token');
+    // return cookie.get(key);
   }
 
   static setCookieByKey = (key,value,options = {}) => {
-    cookie.set(key,value,options);
+    localStorage.setItem(key, value);
+    // cookie.set(key,value,options);
   }
 
 }
