@@ -57,7 +57,7 @@ class HwModelListContainer extends BaseComponent {
           },
         ]}
       >
-        <Item onClick={() => {}}>
+        <Item onClick={() => this.getObjById(item.id)}>
           <div style={{ fontWeight: 'bold' }}>{item.name}</div>
           <Brief>{'内容：' + item.json}</Brief>
           <Brief>{'备注：' + item.nt}</Brief>
