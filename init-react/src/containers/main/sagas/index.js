@@ -3,7 +3,7 @@ import Api from '../../../constants/Api'
 import {action,FETCH_MENU_LIST,LOGOUT} from '../../../constants/BaseAction'
 import { addSaga } from '../../../store/rootSaga'
 import TokenUtil from '../../../common/TokenUtil'
-import { message } from 'antd'
+// import { message } from 'antd'
 import NavigatorAction from '../../../constants/NavigatorAction'
 
 function* watchFetchMenuList () {
@@ -28,7 +28,7 @@ function* watchLogout () {
         yield call(TokenUtil.delUserToken)
         yield put(action(LOGOUT.SUCCESS))
         location.href = '#/login'
-        message.info(`退出成功`)
+        // message.info(`退出成功`)
 
     }catch(e){
       yield put(action(LOGOUT.FAILURE))

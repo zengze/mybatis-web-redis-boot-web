@@ -1,148 +1,162 @@
 import React, {PropTypes} from 'react';
 import { connect } from 'react-redux';
+import _ from 'lodash';
 
-import {Layout, Menu, Breadcrumb, Icon ,Select} from 'antd';
-const Option = Select.Option;
-const {SubMenu} = Menu;
-const {Header, Content, Sider} = Layout;
+import { Menu, NavBar, Icon } from 'antd-mobile';
 
-import {mainAction} from './';
-import MenuComponent from './components/MenuComponent';
-import MenuToggleComponent from './components/MenuToggleComponent';
-import MyBreadcrumb from './components/MyBreadcrumb';
-import SearchHeader from './components/SearchHeader';
+import { mainAction } from './';
 
 import './Main.less';
-let style = localStorage.getItem('style');
-if(style == 'green'){
-  require('./green.less')
-}else{
-  require('./blue.less')
-}
 
 class MainContainer extends React.Component {
 
-    constructor(props){
-        super(props)
-        this.state={
-          active:0,
-          collapsed: false,
-          openKeys: this.getDefaultCollapsedSubMenus(props),
-        }
+  constructor(props){
+    super(props)
+    this.state={
+      show: false,
     }
+  }
 
-    componentWillMount() {
-        this.props.dispatch(mainAction.fetchMenuList())
-    }
+  componentDidMount() {
 
-    activeClick =(index)=>{
-      this.setState({
-        active:index
-      })
-    }
+  }
 
-    logoutClick= () =>{
-      this.props.dispatch(mainAction.logout())
-    }
+  componentWillReceiveProps(nextProps) {
 
-    toggle = () => {
-      this.setState({
-        collapsed: !this.state.collapsed,
-      });
-    }
+  }
 
-    getDefaultCollapsedSubMenus(props) {
-      const { location: { pathname } } = props;
-      return [pathname.split('/').splice(0, 3).join('/')];
-    }
+  handleClick = (e) => {
+    e.preventDefault();
+    this.setState({
+      show: !this.state.show,
+    });
+  }
 
-    getCurrentMenuSelectedKeys() {
-      const { location: { pathname } } = this.props;
-      return [pathname];
-    }
+  onMaskClick = () => {
+    this.setState({
+      show: false,
+    });
+  }
 
-    handleOpenChange = (openKeys) => {
-      const lastOpenKey = openKeys[openKeys.length - 1];
-      this.setState({
-        openKeys: [lastOpenKey],
-      });
-    }
+  _onMenuChange = (value) => {
+    location.href = '#' + value[1];
+    this.setState({
+      menuValue: value,
+      show: false,
+    });
+  }
 
-    render() {
-        const { collapsed, openKeys } = this.state;
+  render() {
+    const { menuValue, show } = this.state;
 
-        const menuList = this.props.data.map(item => {
-          if(item.linkTo != '') {
-            return (
-              <SubMenu key={item.linkTo} style={{marginTop:"50px"}} title={<span>{item.icon && <Icon type={item.icon} />}<span>{item.menuName}</span></span>}>
-              {
-                item.subMenu.map(subMenuItem =>
-                  <Menu.Item key={subMenuItem.linkTo}>
-                    {subMenuItem.linkTo && <a href={"#" + subMenuItem.linkTo}>{subMenuItem.menuName}</a>}
-                  </Menu.Item>
-                )
-              }
-              </SubMenu>
-            )
-          }
-        });
+    const menuData = [
+      {
+        value: '/prj_projectname/wradmab',
+        label: '[ 组织机构 ]管理',
+        children: [
+          {
+            value: '/prj_projectname/wradmab/list',
+            label: '组织机构',
+          },
+          {
+            value: '/prj_projectname/wradmab/add',
+            label: '添加组织',
+          },
+        ],
+      },
+      {
+        value: '/prj_user/hwmodel',
+        label: '配置管理',
+        children: [
+          {
+            value: '/prj_user/hwmodel/list',
+            label: '配置列表',
+          },
+          {
+            value: '/prj_user/hwmodel/add',
+            label: '添加配置',
+          },
+        ],
+      },
+      {
+        value: '/prj_user/hwrole',
+        label: '角色管理',
+        children: [
+          {
+            value: '/prj_user/hwrole/list',
+            label: '角色列表',
+          },
+          {
+            value: '/prj_user/hwrole/add',
+            label: '添加角色',
+          },
+        ],
+      },
+      {
+        value: '/prj_user/hwuser',
+        label: '用户管理',
+        children: [
+          {
+            value: '/prj_user/hwuser/list',
+            label: '用户列表',
+          },
+          {
+            value: '/prj_user/hwuser/add',
+            label: '添加用户',
+          },
+        ],
+      },
+      {
+        value: '/prj_user/hwview',
+        label: '视图管理',
+        children: [
+          {
+            value: '/prj_user/hwview/list',
+            label: '视图列表',
+          },
+          {
+            value: '/prj_user/hwview/add',
+            label: '添加视图',
+          },
+        ],
+      },
+    ];
 
-        // Don't show popup menu when it is been collapsed
-        const menuProps = collapsed ? {} : {
-          openKeys: openKeys,
-        };
+    const menuEl = (
+      <Menu
+        className="foo-menu"
+        data={menuData}
+        value={menuValue}
+        onChange={this._onMenuChange}
+      />
+    );
 
-        return (
-          <div>
-            <Layout>
-              <Sider
-                trigger={null}
-                collapsible
-                collapsed={collapsed}
-                width={256}
-                className="layout-sider"
-              >
-                <div className="layout-logo">
-                  <a href="">
-                    <img src="https://gw.alipayobjects.com/zos/rmsportal/iwWyPinUoseUxIAeElSx.svg" alt="logo" />
-                    <span>爱美斯国际物流</span>
-                  </a>
-                </div>
-                <Menu
-                  theme="dark"
-                  mode="inline"
-                  {...menuProps}
-                  onOpenChange={this.handleOpenChange}
-                  selectedKeys={this.getCurrentMenuSelectedKeys()}
-                  style={{ margin: '16px 0', width: '100%' }}
-                >
-                  {menuList}
-                </Menu>
-              </Sider>
-              <Layout>
-                <Header className="layout-header">
-                  <Icon
-                    className="layout-trigger"
-                    type={collapsed ? 'menu-unfold' : 'menu-fold'}
-                    onClick={this.toggle}
-                  />
-                  <div className="header-logout" onClick={this.logoutClick}><Icon type="logout" style={{marginRight:"15px",fontSize:"20px"}}/>退出</div>
-                </Header>
-                <MyBreadcrumb routes={this.props.routes}/>
-                <Content style={{ margin: '24px 24px 0', height: '100%' }}>
-                  {this.props.children}
-                </Content>
-              </Layout>
-            </Layout>
-          </div>
-        );
-    }
+    return (
+      <div className={show ? 'menu-active' : ''}>
+        <div>
+          <NavBar
+            leftContent="Menu"
+            icon={<img src="https://gw.alipayobjects.com/zos/rmsportal/iXVHARNNlmdCGnwWxQPH.svg" className="am-icon am-icon-md" alt="" />}
+            onLeftClick={this.handleClick}
+            className="top-nav-bar"
+          >
+            Here is title
+          </NavBar>
+        </div>
+        <div>
+          {this.props.children}
+        </div>
+        {show ? menuEl : null}
+        {show ? <div className="menu-mask" onClick={this.onMaskClick} /> : null}
+      </div>
+    );
+  }
 }
 
 const mapStateToProps = (state, ownProps) => {
-    return {
-        data: state.mainReduce.menuListData
-    }
+  return {
+
+  }
 }
 
 export default connect(mapStateToProps)(MainContainer);
