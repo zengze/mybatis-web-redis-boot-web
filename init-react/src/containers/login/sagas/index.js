@@ -1,10 +1,9 @@
 import {take, put, call, fork, select, race, cancel} from 'redux-saga/effects'
 import Api from '../../../constants/Api'
 import TokenUtil from '../../../common/TokenUtil'
-import NavigatorAction from '../../../constants/NavigatorAction'
 import {action,NAVIGATE} from '../../../constants/BaseAction'
 import {LOGIN,LOGIN_URL} from '../actions'
-import { message } from 'antd'
+import { Toast } from 'antd-mobile'
 
     const dealy = (ms = 3000) => {
         return new Promise((resolve, reject) => {
@@ -39,13 +38,12 @@ function* loginFlow() {
              const res = yield call(Api.request,Api.calcUrl(LOGIN_URL),{body:{ username:userName,password },method:'POST'})
              if(res.code == 200 ){
                yield call(TokenUtil.setUserToken,res.data)
-               message.info(`欢迎用户：${userName}`)
+               Toast.info(`欢迎用户：${userName}`, 2)
                yield put(action(LOGIN.SUCCESS))
                location.href = '#/'
              }
            }catch(e){
-             console.log(e)
-            //  message.error(`登录失败：${res.msg}`)
+             // Toast.info(`登录失败：${res.msg}`, 2);
             //  yield put(action(LOGIN.FAILURE,{error : res.msg}))
            }
 

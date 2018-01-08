@@ -1,18 +1,17 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux'
-import { loginAction } from './'
+import { connect } from 'react-redux';
+import { loginAction } from './';
 
-import { Form, Input, Tabs, Button, Icon, Checkbox, Row, Col, Alert } from 'antd';
-const FormItem = Form.Item;
-const { TabPane } = Tabs;
+import { createForm } from 'rc-form';
+
+import { List, InputItem, Button, } from 'antd-mobile';
 
 import './Login.less';
 
 class LoginContainer extends Component {
 
   state = {
-    count: 0,
-    type: 'account',
+
   }
 
   componentWillReceiveProps(nextProps) {
@@ -25,24 +24,6 @@ class LoginContainer extends Component {
 
   componentWillUnmount() {
     clearInterval(this.interval);
-  }
-
-  onSwitch = (key) => {
-    this.setState({
-      type: key,
-    });
-  }
-
-  onGetCaptcha = () => {
-    let count = 59;
-    this.setState({ count });
-    this.interval = setInterval(() => {
-      count -= 1;
-      this.setState({ count });
-      if (count === 0) {
-        clearInterval(this.interval);
-      }
-    }, 1000);
   }
 
   handleSubmit = (e) => {
@@ -61,20 +42,9 @@ class LoginContainer extends Component {
     );
   }
 
-  renderMessage = (message) => {
-    return (
-      <Alert
-        style={{ marginBottom: 24 }}
-        message={message}
-        type="error"
-        showIcon
-      />
-    );
-  }
-
   render() {
-    const { getFieldDecorator } = this.props.form;
-    const { count, type, status } = this.state;
+    const { getFieldProps } = this.props.form;
+    const { status } = this.state;
 
     return (
       <div className="login-container">
@@ -86,122 +56,24 @@ class LoginContainer extends Component {
             </a>
           </div>
         </div>
-        <div className="login-main">
-          <Form onSubmit={this.handleSubmit}>
-            <Tabs animated={false} className="tabs" activeKey={type} onChange={this.onSwitch}>
-              <TabPane tab="账户密码登录" key="account">
-                {/* {
-                  status === 'REQUEST' &&
-                  type === 'account' &&
-                  this.renderMessage('账户或密码错误')
-                } */}
-                <FormItem>
-                  {getFieldDecorator('userName', {
-                    rules: [{
-                      required: type === 'account', message: '请输入账户名！',
-                    }],
-                  })(
-                    <Input
-                      size="large"
-                      prefix={<Icon type="user" className="prefixIcon" />}
-                      placeholder="用户名"
-                    />
-                  )}
-                </FormItem>
-                <FormItem>
-                  {getFieldDecorator('password', {
-                    rules: [{
-                      required: type === 'account', message: '请输入密码！',
-                    }],
-                  })(
-                    <Input
-                      size="large"
-                      prefix={<Icon type="lock" className="prefixIcon" />}
-                      type="password"
-                      placeholder="密码"
-                    />
-                  )}
-                </FormItem>
-              </TabPane>
-              <TabPane tab="手机号登录" key="mobile">
-                {/* {
-                  status === 'REQUEST' &&
-                  type === 'mobile' &&
-                  this.renderMessage('验证码错误')
-                } */}
-                <FormItem>
-                  {getFieldDecorator('mobile', {
-                    rules: [{
-                      required: type === 'mobile', message: '请输入手机号！',
-                    }, {
-                      pattern: /^1\d{10}$/, message: '手机号格式错误！',
-                    }],
-                  })(
-                    <Input
-                      size="large"
-                      prefix={<Icon type="mobile" className="prefixIcon" />}
-                      placeholder="手机号"
-                    />
-                  )}
-                </FormItem>
-                <FormItem>
-                  <Row gutter={8}>
-                    <Col span={16}>
-                      {getFieldDecorator('captcha', {
-                        rules: [{
-                          required: type === 'mobile', message: '请输入验证码！',
-                        }],
-                      })(
-                        <Input
-                          size="large"
-                          prefix={<Icon type="mail" className="prefixIcon" />}
-                          placeholder="验证码"
-                        />
-                      )}
-                    </Col>
-                    <Col span={8}>
-                      <Button
-                        disabled={count}
-                        className="getCaptcha"
-                        size="large"
-                        onClick={this.onGetCaptcha}
-                      >
-                        {count ? `${count} s` : '获取验证码'}
-                      </Button>
-                    </Col>
-                  </Row>
-                </FormItem>
-              </TabPane>
-            </Tabs>
-            <FormItem className="additional">
-              {getFieldDecorator('remember', {
-                valuePropName: 'checked',
-                initialValue: true,
-              })(
-                <Checkbox style={{ marginBottom: 0 }}>自动登录</Checkbox>
-              )}
-              <a className="forgot" href="">忘记密码</a>
-              <Button size="large" className="submit" type="primary" htmlType="submit">
-                登录
-              </Button>
-            </FormItem>
-          </Form>
-          <div className="other">
-            其他登录方式
-            {/* 需要加到 Icon 中 */}
-            <span className="iconAlipay" />
-            <span className="iconTaobao" />
-            <span className="iconWeibo" />
-            <a className="register" href="">注册账户</a>
-          </div>
-        </div>
+        <List>
+          <InputItem
+            {...getFieldProps('userName')}
+            placeholder="请输入用户名"
+          >用户名</InputItem>
+          <InputItem
+            {...getFieldProps('password')}
+            type="password"
+            placeholder="请输入密码"
+          >密码2</InputItem>
+          <Button type="primary" onClick={this.handleSubmit}>登录</Button>
+        </List>
         <div className="login-footer">
           南京鼎盛合力水利技术有限公司 Copyright © 2016 - 2019
         </div>
       </div>
     );
   }
-
 }
 
 function mapStateToProps(state){
@@ -212,12 +84,12 @@ function mapStateToProps(state){
 
 function mapDispatchToProps(dispatch){
   return {
-      login(userName,password){
-        dispatch(loginAction.login(userName,password))
-      }
+    login(userName,password){
+      dispatch(loginAction.login(userName,password))
+    }
   }
 }
 
-LoginContainer = Form.create()(LoginContainer);
+LoginContainer = createForm()(LoginContainer);
 
 export default connect(mapStateToProps,mapDispatchToProps)(LoginContainer)
