@@ -1,71 +1,115 @@
 import React , {Component} from 'react'
 import { connect } from 'react-redux'
-import HwRoleListComponent from './list_component'
-import { NAVIGATE } from '../../../../constants/BaseAction'
+import ReactDOM from 'react-dom';
+import _ from 'lodash';
+
+import { List, PullToRefresh, SwipeAction, SearchBar } from 'antd-mobile';
+const Item = List.Item;
+const Brief = Item.Brief;
+
 import hwRoleActions,{HW_ROLE} from '../actions'
-import SearchHeader  from  '../../../main/components/SearchHeader'
-import ObjectFields from '../structure'
 import BaseComponent from '../../../../common/BaseComponent'
-import NavigatorAction from '../../../../constants/NavigatorAction'
+
 class HwRoleListContainer extends BaseComponent {
-    constructor (props) {
-        super(props)
-        Object.assign(this.actions,hwRoleActions)
-		this.state={
-				listParam:{
-				current : "0",
-				pageSize : "10",
-				field : "",
-				keywords:"",
-				order:"",
-				columnKey:""
-			  }
-			}
-    }
-    componentWillMount() {
-      this.getObjList(this.getQueryParams(this.state.listParam))
-    }
 
-    onChange = (pagination, filters, sorter) =>{
-        let values = Object.assign({},this.state.listParam,sorter?{order:sorter.order,columnKey:sorter.columnKey}:undefined)
-        Object.assign(values,pagination);
-        this.setState({listParam:values});
-        let listParam = this.getQueryParams(values);
-        this.getObjList(listParam)
-    }
-    add = () => {
-  		location.href = '#/'+HW_ROLE.URL+'/add'
-  	}
-    reload = () => {
-	   const listParam = {
-				current : "0",
-				pageSize : "10",
-				field : "",
-				keywords:"",
-				order:"",
-				columnKey:""
+  constructor (props) {
+    super(props)
+    Object.assign(this.actions,hwRoleActions)
+  	this.state={
+			listParam:{
+  			current : "0",
+  			pageSize : "10",
+  			field : "",
+  			keywords:"",
+  			order:"",
+  			columnKey:""
 		  }
+		}
+  }
 
-		this.getObjList(this.getQueryParams(listParam));
-	}
+  componentDidMount() {
+    this.getObjList(this.getQueryParams(this.state.listParam));
+
+    const hei = this.state.height - ReactDOM.findDOMNode(this.ptr).offsetTop;
+    setTimeout(() => this.setState({
+      height: hei,
+    }), 0);
+  }
+
+  _list(item) {
+    return (
+      <SwipeAction
+        style={{ backgroundColor: 'gray' }}
+        autoClose
+        right={[
+          {
+            text: '编辑',
+            onPress: () => this.getObjById(item.id),
+            style: { backgroundColor: '#ddd', color: 'white' },
+          },
+          {
+            text: '删除',
+            onPress: () => this.delObjById(item.id,this.getQueryParams(this.state.listParam)),
+            style: { backgroundColor: '#F4333C', color: 'white' },
+          },
+        ]}
+      >
+        <Item onClick={() => this.getObjById(item.id)}>
+          <div style={{ fontWeight: 'bold' }}>{item.name}</div>
+          <Brief>{'类型：' + item.type}</Brief>
+          <Brief>{'备注：' + item.nt}</Brief>
+          <Brief>{'配置：' + item.modelDesp}</Brief>
+        </Item>
+      </SwipeAction>
+    )
+  }
+
  render() {
-        const { hwRoleListReducer } = this.props;
-        let pagination ={
-        total: hwRoleListReducer.param.total, //数据总数量
-        pageSize: 10,  //显示几条一页
-      }
-        return (
-          <div>
-            <SearchHeader search={this.onChange}  add={this.add} reload={this.reload} columns={this.filter4Search(ObjectFields)}/>
-            <HwRoleListComponent hwRoleList={hwRoleListReducer.data} loading={hwRoleListReducer.loading} columns={this.addUpdateDelBnts(this.filter4List(ObjectFields))}
-              onChange={this.onChange} pagination={pagination} />
-          </div>
-      );
-    }
+    const { hwRoleListReducer } = this.props;
+
+    return (
+      <div>
+        <SearchBar
+          placeholder="Search"
+          cancelText={'查询'} />
+        <PullToRefresh
+          ref={el => this.ptr = el}
+          style={{
+            height: this.state.height,
+            overflow: 'auto',
+          }}
+          indicator={this.state.down ? {} : { deactivate: '上拉可以刷新' }}
+          direction={this.state.down ? 'down' : 'up'}
+          refreshing={this.state.refreshing}
+          distanceToRefresh={50}
+          onRefresh={() => {
+            this.setState({ refreshing: true });
+            setTimeout(() => {
+              this.setState({ refreshing: false });
+            }, 1000);
+          }}
+        >
+          <List>
+            {
+              hwRoleListReducer.data.length == 0
+              ?
+                <div style={{ padding: 10, textAlign: 'center' }}>暂无数据</div>
+              :
+                _.map(hwRoleListReducer.data, (item) => {
+                  return this._list(item);
+                })
+            }
+          </List>
+        </PullToRefresh>
+      </div>
+    );
+  }
 }
+
 const mapStateToProps = (state, ownProps) => {
-    return {
-        hwRoleListReducer : state.hwRoleListReducer.toJS()
-    }
+  return {
+    hwRoleListReducer: state.hwRoleListReducer.toJS()
+  }
 }
+
 export default connect(mapStateToProps)(HwRoleListContainer)
