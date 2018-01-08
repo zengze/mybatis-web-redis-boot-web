@@ -24,7 +24,6 @@ class HwModelListContainer extends BaseComponent {
     		order:"",
     		columnKey:""
       },
-      refreshing: false,
       down: true,
       height: document.documentElement.clientHeight,
     }
@@ -67,7 +66,7 @@ class HwModelListContainer extends BaseComponent {
   }
 
   render() {
-    const { hwModelListReducer } = this.props;
+    const { data:hwModelList,loading:hwModelListLoading } = this.props.hwModelListReducer;
 
     return (
       <div>
@@ -82,22 +81,19 @@ class HwModelListContainer extends BaseComponent {
           }}
           indicator={this.state.down ? {} : { deactivate: '上拉可以刷新' }}
           direction={this.state.down ? 'down' : 'up'}
-          refreshing={this.state.refreshing}
+          refreshing={this.state.hwModelListLoading}
           distanceToRefresh={50}
           onRefresh={() => {
-            this.setState({ refreshing: true });
-            setTimeout(() => {
-              this.setState({ refreshing: false });
-            }, 1000);
+            this.getObjList(this.getQueryParams(this.state.listParam));
           }}
         >
           <List>
             {
-              hwModelListReducer.data.length == 0
+              hwModelList.length == 0
               ?
                 <div style={{ padding: 10, textAlign: 'center' }}>暂无数据</div>
               :
-                _.map(hwModelListReducer.data, (item) => {
+                _.map(hwModelList, (item) => {
                   return this._list(item);
                 })
             }

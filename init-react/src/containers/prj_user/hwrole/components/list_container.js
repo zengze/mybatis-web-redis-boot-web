@@ -24,7 +24,6 @@ class HwRoleListContainer extends BaseComponent {
   			order:"",
   			columnKey:""
 		  },
-      refreshing: false,
       down: true,
       height: document.documentElement.clientHeight,
 		};
@@ -68,7 +67,7 @@ class HwRoleListContainer extends BaseComponent {
   }
 
  render() {
-    const { hwRoleListReducer } = this.props;
+    const { data:hwRoleList,loading:hwRoleListLoading } = this.props.hwRoleListReducer;
 
     return (
       <div>
@@ -83,22 +82,19 @@ class HwRoleListContainer extends BaseComponent {
           }}
           indicator={this.state.down ? {} : { deactivate: '上拉可以刷新' }}
           direction={this.state.down ? 'down' : 'up'}
-          refreshing={this.state.refreshing}
+          refreshing={this.state.hwRoleListLoading}
           distanceToRefresh={50}
           onRefresh={() => {
-            this.setState({ refreshing: true });
-            setTimeout(() => {
-              this.setState({ refreshing: false });
-            }, 1000);
+            this.getObjList(this.getQueryParams(this.state.listParam));
           }}
         >
           <List>
             {
-              hwRoleListReducer.data.length == 0
+              hwRoleList.length == 0
               ?
                 <div style={{ padding: 10, textAlign: 'center' }}>暂无数据</div>
               :
-                _.map(hwRoleListReducer.data, (item) => {
+                _.map(hwRoleList, (item) => {
                   return this._list(item);
                 })
             }
