@@ -13,18 +13,21 @@ import BaseComponent from '../../../../common/BaseComponent'
 class HwRoleListContainer extends BaseComponent {
 
   constructor (props) {
-    super(props)
-    Object.assign(this.actions,hwRoleActions)
-  	this.state={
-			listParam:{
+    super(props);
+    Object.assign(this.actions,hwRoleActions);
+  	this.state = {
+			listParam: {
   			current : "0",
   			pageSize : "10",
   			field : "",
   			keywords:"",
   			order:"",
   			columnKey:""
-		  }
-		}
+		  },
+      refreshing: false,
+      down: true,
+      height: document.documentElement.clientHeight,
+		};
   }
 
   componentDidMount() {
