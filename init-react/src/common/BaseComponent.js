@@ -1,9 +1,6 @@
 import React , {Component,PropTypes} from 'react'
 import { connect } from 'react-redux'
-import { Form, Input, Button, Checkbox ,AutoComplete ,Select,Icon } from 'antd';
-import  {SearchableList} from './SearchableList'
 
-const FormItem = Form.Item
 class BaseComponent extends Component {
 
    constructor(props){
@@ -80,21 +77,6 @@ class BaseComponent extends Component {
             };
     return queryParams;
   }
-//带搜索功能的列表
-searchableList(label,fieldName,fieldId,fieldLabel,required,dataSource,autoSeacrch,layout,hasMoreButton) {
-   return <FormItem {...layout} label={label}>
-               {this.props.form.getFieldDecorator(fieldName, {
-                 rules: [{
-                   required: required,
-                   message:'请选择' + label
-
-                 }],
-                initialValue: fieldId
-               })(
-                 <SearchableList selectLabel ={fieldLabel} hasMoreButton={hasMoreButton} dataSource={dataSource}  AutoSeacrch={autoSeacrch} />
-               )}
-             </FormItem>
-}
 //calculate value by token and enum arrays(its element format: {token:'xxx',name:'xxx'})
 getEnumValue(enumToken,enumList){
    for (let item of enumList)
@@ -106,45 +88,7 @@ getEnumValue(enumToken,enumList){
    }
   return null;
 }
-//带搜索功能的列表
-enumList(label,fieldName,fieldId,fieldLabel,required,enumList,autoSeacrch,layout) {
-  let displayText = this.getEnumValue(fieldId,enumList);
-   return <FormItem {...layout} label={label}>
-               {this.props.form.getFieldDecorator(fieldName, {
-                 rules: [{
-                   required: required,
-                   message:'请选择' + label
-                 }],
-                initialValue: fieldId
-               })(
-                 <SearchableList selectLabel ={displayText} hasMoreButton={false} dataSource={enumList}  AutoSeacrch={autoSeacrch} />
-               )}
-             </FormItem>
-}
 
-//渲染普通输入框
-input(label,fieldName,fieldValue,required,layout) {
- return <FormItem {...layout} label={label}>
-               {this.props.form.getFieldDecorator(fieldName, {
-                 rules: [{
-                   required: required,
-                   message: '请输入' + label
-                 }],
-                 initialValue:fieldValue
-               })(
-                 <Input placeholder={"请输入" + label} />
-               )}
-             </FormItem>
-}
-//生成提交按钮
-submitForm(label,layout){
- return <FormItem {...layout}>
-               <Button type="primary"  htmlType="submit">
-         {label}
-               </Button>
-             </FormItem>
-
-}
 filter4Search=(ObjectFields)=>{
     let columns= new Array();
     for(var column of ObjectFields)
