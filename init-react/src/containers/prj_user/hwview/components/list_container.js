@@ -57,7 +57,7 @@ class HwViewListContainer extends BaseComponent {
         ]}
       >
         <Item onClick={() => this.getObjById(item.id)}>
-          <div style={{ fontWeight: 'bold' }}>{item.username}</div>
+          <div style={{ fontWeight: 'bold' }}>{item.name}</div>
           <Brief>{'角色：' + item.roleDesp}</Brief>
           <Brief>{'模块：' + item.module}</Brief>
           <Brief>{'内容：' + item.json}</Brief>
