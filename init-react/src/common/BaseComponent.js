@@ -68,6 +68,7 @@ class BaseComponent extends Component {
             } = listParams;
 
     const queryParams = {
+              ...listParams,
               pageNum:pageNum,
               numPerPage :numPerPage,
               field : field,

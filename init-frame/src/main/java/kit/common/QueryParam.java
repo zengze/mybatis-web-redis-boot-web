@@ -9,6 +9,11 @@ public class QueryParam {
     public String field;
     public String keywords;
     public String orderField;
+    public String orderDirection;
+
+    public String name;
+    public String type;
+    public String nt;
 
     public String getPageNum() {
         return pageNum;
@@ -58,5 +63,28 @@ public class QueryParam {
         this.orderDirection = orderDirection;
     }
 
-    public String orderDirection;
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getNt() {
+        return nt;
+    }
+
+    public void setNt(String nt) {
+        this.nt = nt;
+    }
+
 }
