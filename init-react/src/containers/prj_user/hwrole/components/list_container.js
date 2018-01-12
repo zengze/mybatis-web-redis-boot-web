@@ -42,7 +42,7 @@ class HwRoleListContainer extends BaseComponent {
     if(nextProps.hwRoleListReducer !== this.props.hwRoleListReducer) {
       this.setState({
         hwRoleList: nextProps.hwRoleListReducer.data,
-        hwRoleListLoading: nextProps.hwRoleListReducer.loading,
+        // hwRoleListLoading: nextProps.hwRoleListReducer.loading,
       });
     }
   }
@@ -101,7 +101,8 @@ class HwRoleListContainer extends BaseComponent {
           placeholder="Search"
           cancelText={'查询'}
           value={this.state.keywords}
-          onChange={(val) => this.setState({ keywords: val }) }
+          onChange={(val) => this.setState({ keywords: val })}
+          onClear={(val) => this.setState({ keywords: '' })}
           onCancel={() => this._select()} />
         <PullToRefresh
           ref={el => this.ptr = el}
