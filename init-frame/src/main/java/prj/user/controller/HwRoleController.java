@@ -159,7 +159,7 @@ public class HwRoleController extends BaseController
 			searchFields.add(new SearchField(queryParam.type, false, false, queryParam.keywords));
 		if (StringUtils.hasText(queryParam.nt) && StringUtils.hasText(queryParam.keywords))
 			searchFields.add(new SearchField(queryParam.nt, false, false, queryParam.keywords));
-		PagingCriteria baseCriteria = PagingCriteria.createCriteriaWithAllParamter(start, intPageSize, intPage - 1, sortFields, searchFields);
+		PagingCriteria baseCriteria = PagingCriteria.createCriteriaWithAllParamterAddi(start, intPageSize, intPage - 1, sortFields, searchFields, "", "or");
 		try {
 				PageMyBatis<HwRole> pageMyBatis = hwRoleDao.queryListByPageFully(baseCriteria);
 				
