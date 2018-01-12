@@ -24,18 +24,45 @@ class HwUserListContainer extends BaseComponent {
   			order:"",
   			columnKey:""
 		  },
+      keywords: '',
       down: true,
       height: document.documentElement.clientHeight,
 		};
   }
 
   componentDidMount() {
-    this.getObjList(this.getQueryParams(this.state.listParam));
+    this._select();
 
     const hei = this.state.height - ReactDOM.findDOMNode(this.ptr).offsetTop;
     setTimeout(() => this.setState({
       height: hei,
     }), 0);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if(nextProps.hwUserListReducer !== this.props.hwUserListReducer) {
+      this.setState({
+        hwUserList: nextProps.hwUserListReducer.data,
+        // hwUserListLoading: nextProps.hwUserListReducer.loading,
+      });
+    }
+  }
+
+  _select() {
+    const { keywords } = this.state;
+    const listParam = {
+      current: "0",
+      pageSize: "10",
+      field: "",
+      keywords: keywords,
+      order: "",
+      columnKey: "",
+      username: "HW_USER.username",
+      alias: "HW_USER.alias",
+      nt: "HW_USER.nt",
+    };
+
+    this.getObjList(this.getQueryParams(listParam));
   }
 
   _list(item) {
@@ -68,13 +95,17 @@ class HwUserListContainer extends BaseComponent {
   }
 
   render() {
-    const { data:hwUserList,loading:hwUserListLoading } = this.props.hwUserListReducer;
+    const { hwUserList } = this.state;
 
     return (
       <div>
         <SearchBar
           placeholder="Search"
-          cancelText={'查询'} />
+          cancelText={'查询'}
+          value={this.state.keywords}
+          onChange={(val) => this.setState({ keywords: val })}
+          onClear={(val) => this.setState({ keywords: '' })}
+          onCancel={() => this._select()} />
         <PullToRefresh
           ref={el => this.ptr = el}
           style={{
@@ -85,13 +116,11 @@ class HwUserListContainer extends BaseComponent {
           direction={this.state.down ? 'down' : 'up'}
           refreshing={this.state.hwUserListLoading}
           distanceToRefresh={50}
-          onRefresh={() => {
-            this.getObjList(this.getQueryParams(this.state.listParam));
-          }}
+          onRefresh={() => this._select()}
         >
           <List>
             {
-              hwUserList.length == 0
+              hwUserList && hwUserList.length == 0
               ?
                 <div style={{ padding: 10, textAlign: 'center' }}>暂无数据</div>
               :

@@ -29,6 +29,7 @@ import java.sql.Time;
 import java.sql.Timestamp;
 import kit.common.TypeConvert;
 import kit.common.BaseController;
+import com.google.common.collect.Lists;
 import static kit.common.JsonResult.*;
 
 import prj.user.dao.*;
@@ -141,10 +142,25 @@ public class HwUserController extends BaseController
     }
     @ResponseBody
     @RequestMapping(value="/list",method=RequestMethod.POST)
-    public Map<String,Object> queryListByPageFully(@RequestBody QueryParam queryParam) 
+    public Map<String,Object> queryListByPageFully(@RequestBody QueryParam queryParam)
     {
-    	PagingCriteria baseCriteria = fillPagingCriteria(queryParam.pageNum,queryParam.numPerPage,queryParam.field,queryParam.keywords,queryParam.orderField,queryParam.orderDirection);
-        try {
+		int intPage = Integer.parseInt(queryParam.pageNum);
+		int intPageSize = Integer.parseInt(queryParam.numPerPage);
+		int start = (intPage - 1) * intPageSize;
+
+		List<SortField> sortFields = Lists.newArrayList();
+		if (StringUtils.hasText(queryParam.orderField))
+			sortFields.add(new SortField(queryParam.orderField, queryParam.orderDirection));
+
+		List<SearchField> searchFields = Lists.newArrayList();
+		if (StringUtils.hasText(queryParam.username) && StringUtils.hasText(queryParam.keywords))
+			searchFields.add(new SearchField(queryParam.username, false, false, queryParam.keywords));
+		if (StringUtils.hasText(queryParam.alias) && StringUtils.hasText(queryParam.keywords))
+			searchFields.add(new SearchField(queryParam.alias, false, false, queryParam.keywords));
+		if (StringUtils.hasText(queryParam.nt) && StringUtils.hasText(queryParam.keywords))
+			searchFields.add(new SearchField(queryParam.nt, false, false, queryParam.keywords));
+		PagingCriteria baseCriteria = PagingCriteria.createCriteriaWithAllParamterAddi(start, intPageSize, intPage - 1, sortFields, searchFields, "", "or");
+		try {
 				PageMyBatis<HwUser> pageMyBatis = hwUserDao.queryListByPageFully(baseCriteria);
 				
 				Map param = new LinkedHashMap();

@@ -15,6 +15,9 @@ public class QueryParam {
     public String type;
     public String nt;
 
+    public String username;
+    public String alias;
+
     public String getPageNum() {
         return pageNum;
     }
@@ -85,6 +88,22 @@ public class QueryParam {
 
     public void setNt(String nt) {
         this.nt = nt;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getAlias() {
+        return alias;
+    }
+
+    public void setAlias(String alias) {
+        this.alias = alias;
     }
 
 }
