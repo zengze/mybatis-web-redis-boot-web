@@ -16,14 +16,6 @@ class HwUserListContainer extends BaseComponent {
     super(props);
     Object.assign(this.actions,hwUserActions);
   	this.state = {
-			listParam: {
-  			current : "0",
-  			pageSize : "10",
-  			field : "",
-  			keywords:"",
-  			order:"",
-  			columnKey:""
-		  },
       keywords: '',
       down: true,
       height: document.documentElement.clientHeight,
@@ -61,6 +53,10 @@ class HwUserListContainer extends BaseComponent {
       alias: "HW_USER.alias",
       nt: "HW_USER.nt",
     };
+
+    this.setState({
+      listParam: listParam,
+    });
 
     this.getObjList(this.getQueryParams(listParam));
   }

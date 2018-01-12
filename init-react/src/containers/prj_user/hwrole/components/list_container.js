@@ -16,14 +16,7 @@ class HwRoleListContainer extends BaseComponent {
     super(props);
     Object.assign(this.actions,hwRoleActions);
     this.state = {
-      listParam: {
-        current : "0",
-        pageSize : "10",
-        field : "",
-        keywords:"",
-        order:"",
-        columnKey:""
-      },
+      keywords:"",
       down: true,
       height: document.documentElement.clientHeight,
     };
@@ -60,6 +53,10 @@ class HwRoleListContainer extends BaseComponent {
       type: "HW_ROLE.type",
       nt: "HW_ROLE.nt",
     };
+
+    this.setState({
+      listParam: listParam,
+    });
 
     this.getObjList(this.getQueryParams(listParam));
   }
