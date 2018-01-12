@@ -20,6 +20,8 @@ public class QueryParam {
 
     public String json;
 
+    public String module;
+
     public String getPageNum() {
         return pageNum;
     }
@@ -114,6 +116,14 @@ public class QueryParam {
 
     public void setJson(String json) {
         this.json = json;
+    }
+
+    public String getModule() {
+        return module;
+    }
+
+    public void setModule(String module) {
+        this.module = module;
     }
 
 }
