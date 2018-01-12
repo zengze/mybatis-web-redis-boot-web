@@ -16,26 +16,49 @@ class HwModelListContainer extends BaseComponent {
     super(props)
     Object.assign(this.actions,hwModelActions)
     this.state = {
-    	listParam: {
-    		current : "0",
-    		pageSize : "10",
-    		field : "",
-    		keywords:"",
-    		order:"",
-    		columnKey:""
-      },
+      keywords:"",
       down: true,
       height: document.documentElement.clientHeight,
     }
   }
 
   componentDidMount() {
-    this.getObjList(this.getQueryParams(this.state.listParam));
+    this._select();
 
     const hei = this.state.height - ReactDOM.findDOMNode(this.ptr).offsetTop;
     setTimeout(() => this.setState({
       height: hei,
     }), 0);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if(nextProps.hwModelListReducer !== this.props.hwModelListReducer) {
+      this.setState({
+        hwModelList: nextProps.hwModelListReducer.data,
+        // hwModelListLoading: nextProps.hwModelListReducer.loading,
+      });
+    }
+  }
+
+  _select() {
+    const { keywords } = this.state;
+    const listParam = {
+      current: "0",
+      pageSize: "10",
+      field: "",
+      keywords: keywords,
+      order: "",
+      columnKey: "",
+      name: "HW_MODEL.name",
+      json: "HW_MODEL.json",
+      nt: "HW_MODEL.nt",
+    };
+
+    this.setState({
+      listParam: listParam,
+    });
+
+    this.getObjList(this.getQueryParams(listParam));
   }
 
   _list(item) {
@@ -66,13 +89,17 @@ class HwModelListContainer extends BaseComponent {
   }
 
   render() {
-    const { data:hwModelList,loading:hwModelListLoading } = this.props.hwModelListReducer;
+    const { hwModelList } = this.state;
 
     return (
       <div>
         <SearchBar
           placeholder="Search"
-          cancelText={'查询'} />
+          cancelText={'查询'}
+          value={this.state.keywords}
+          onChange={(val) => this.setState({ keywords: val })}
+          onClear={(val) => this.setState({ keywords: '' })}
+          onCancel={() => this._select()} />
         <PullToRefresh
           ref={el => this.ptr = el}
           style={{
@@ -83,13 +110,11 @@ class HwModelListContainer extends BaseComponent {
           direction={this.state.down ? 'down' : 'up'}
           refreshing={this.state.hwModelListLoading}
           distanceToRefresh={50}
-          onRefresh={() => {
-            this.getObjList(this.getQueryParams(this.state.listParam));
-          }}
+          onRefresh={() => this._select()}
         >
           <List>
             {
-              hwModelList.length == 0
+              hwModelList && hwModelList.length == 0
               ?
                 <div style={{ padding: 10, textAlign: 'center' }}>暂无数据</div>
               :

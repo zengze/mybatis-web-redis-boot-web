@@ -1,4 +1,5 @@
 package prj.user.controller;
+import com.google.common.collect.Lists;
 import kit.common.QueryParam;
 import kit.common.BaseController;
 import org.apache.log4j.Logger;
@@ -140,8 +141,23 @@ public class HwModelController extends BaseController
     @RequestMapping(value="/list",method=RequestMethod.POST)
     public Map<String,Object> queryListByPageFully(@RequestBody QueryParam queryParam) 
     {
-    	PagingCriteria baseCriteria = fillPagingCriteria(queryParam.pageNum,queryParam.numPerPage,queryParam.field,queryParam.keywords,queryParam.orderField,queryParam.orderDirection);
-        try {
+		int intPage = Integer.parseInt(queryParam.pageNum);
+		int intPageSize = Integer.parseInt(queryParam.numPerPage);
+		int start = (intPage - 1) * intPageSize;
+
+		List<SortField> sortFields = Lists.newArrayList();
+		if (StringUtils.hasText(queryParam.orderField))
+			sortFields.add(new SortField(queryParam.orderField, queryParam.orderDirection));
+
+		List<SearchField> searchFields = Lists.newArrayList();
+		if (StringUtils.hasText(queryParam.name) && StringUtils.hasText(queryParam.keywords))
+			searchFields.add(new SearchField(queryParam.name, false, false, queryParam.keywords));
+		if (StringUtils.hasText(queryParam.json) && StringUtils.hasText(queryParam.keywords))
+			searchFields.add(new SearchField(queryParam.json, false, false, queryParam.keywords));
+		if (StringUtils.hasText(queryParam.nt) && StringUtils.hasText(queryParam.keywords))
+			searchFields.add(new SearchField(queryParam.nt, false, false, queryParam.keywords));
+		PagingCriteria baseCriteria = PagingCriteria.createCriteriaWithAllParamterAddi(start, intPageSize, intPage - 1, sortFields, searchFields, "", "or");
+		try {
 				PageMyBatis<HwModel> pageMyBatis = hwModelDao.queryListByPageFully(baseCriteria);
 				
 				Map param = new LinkedHashMap();

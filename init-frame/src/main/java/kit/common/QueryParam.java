@@ -18,6 +18,8 @@ public class QueryParam {
     public String username;
     public String alias;
 
+    public String json;
+
     public String getPageNum() {
         return pageNum;
     }
@@ -104,6 +106,14 @@ public class QueryParam {
 
     public void setAlias(String alias) {
         this.alias = alias;
+    }
+
+    public String getJson() {
+        return json;
+    }
+
+    public void setJson(String json) {
+        this.json = json;
     }
 
 }
